@@ -11,13 +11,11 @@
 - Accelerated CRC computations using precalculated CRC values.
 
 
-
 **TODO:**
 
 - CRC calculation optimization for STM32 using CRC calculation unit;
 - Enhanced UART performance for STM32:
 	- Hardware UART peripheral
-	- Single wire UART support
 - Software UART support
 - Usage examples
 - Arduino library
