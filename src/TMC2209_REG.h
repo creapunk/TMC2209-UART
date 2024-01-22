@@ -294,7 +294,7 @@ namespace TMC2209_REG_DEFAULT
     constexpr TMC2209_REG_FIELD::Register_IHOLD_IRUN IHOLD_IRUN_DEFAULT = {
         .REG = {
             .ihold = 4,     // 1/4 of max current
-            .irun = 8,      // 1/4 of max current
+            .irun = 4,      // 1/4 of max current
             .iholddelay = 7 // Optimal value
         }};
 

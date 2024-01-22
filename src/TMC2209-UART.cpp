@@ -1,4 +1,4 @@
-#include "TMC2209.h"
+#include "TMC2209-UART.h"
 
 
 TMC2209::TMC2209()
@@ -6,7 +6,7 @@ TMC2209::TMC2209()
     
 }
 
-void TMC2209::setupDefault(TMC2209_UNIT *config)
+bool TMC2209::setupDefault(TMC2209_UNIT *config)
 {
     ll.writeGCONF(config, TMC2209_REG_DEFAULT::GCONF_DEFAULT.UINT32);
     ll.writeIHOLD_IRUN(config, TMC2209_REG_DEFAULT::IHOLD_IRUN_DEFAULT.UINT32);
@@ -14,17 +14,12 @@ void TMC2209::setupDefault(TMC2209_UNIT *config)
     ll.writePWMCONF(config, TMC2209_REG_DEFAULT::PWMCONF_DEFAULT.UINT32);
     ll.writeTPWMTHRS(config, TMC2209_REG_DEFAULT::TPWMTHRS_DEFAULT.UINT32);
     ll.writeTCOOLTHRS(config, TMC2209_REG_DEFAULT::TCOOLTHRS_DEFAULT.UINT32);
-    if (available(config)) {
-        SerialUSB.print("IOIN: ");
-        SerialUSB.println(config->IOIN.UINT32, HEX);
-    }
+    return available(config);
 }
 
 bool TMC2209::available(TMC2209_UNIT *config)
 {
     if (ll.readIOIN(config) != UINT32_MAX) {
-                SerialUSB.print("IOIN: ");
-        SerialUSB.println(config->IOIN.UINT32, HEX);
         return true;
     }
     return false;
@@ -114,12 +109,6 @@ uint32_t TMC2209_LL::respondData(uint64_t datagram)
     uint32_t data = datagram >>= 8; // datagr.data;
     uint8_t crc_recieved = datagram >>= 32;
     uint8_t crc_calculated = get4ByteCRC(data, get1ByteCRC(reg, CRC_START_ADR_RESPOND));
-    SerialUSB.print("Actual reg: ");
-    SerialUSB.print(reg, HEX);
-    SerialUSB.print("; Actual crc: ");
-    SerialUSB.print(crc_recieved, HEX);
-    SerialUSB.print("; Calculated crc: ");
-    SerialUSB.println(crc_calculated, HEX);
     if (crc_recieved != crc_calculated)
         return UINT32_MAX;
     return reverseBytes(data);
@@ -156,7 +145,6 @@ void TMC2209_LL::request(HardwareSerial *hserial, uint8_t address, uint8_t reg)
     hserial->flush(); // Wait communication complete
     for (uint8_t i = 0; i < 4; ++i)
         hserial->write((uint8_t)(datagram >> (i * 8U))); // Send message
-    SerialUSB.println(datagram, HEX);
 }
 
 uint64_t TMC2209_LL::respond(HardwareSerial *hserial)

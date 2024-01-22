@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef TMC2209_H
-#define TMC2209_H
+#ifndef TMC2209_UART_H
+#define TMC2209_UART_H
 #include <Arduino.h>
 #include "TMC2209_UNIT.h"
 
@@ -120,7 +120,7 @@ public:
      * @brief Устанавливает параметры по умолчанию для драйвера
      * @param config - ссылка на экземпляр настроек драйвера
      */
-    void setupDefault(TMC2209_UNIT *config);
+    bool setupDefault(TMC2209_UNIT *config);
 
     /**
      * @brief Проверяет, доступен ли драйвер, отправляя запрос в регистр IOIN.
